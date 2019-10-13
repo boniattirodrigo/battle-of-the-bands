@@ -43,20 +43,38 @@
   )
 )
 
-(defn -main
-  [& args]
+(defn setup-instructions
+  []
   (println "Welcome to battle of the bands!")
-  (println "We need your spotify token to fetch your top artists listened. We don't store it.")
-  (println "Go to https://developer.spotify.com/console/get-current-user-top-artists-and-tracks, check user-top-read and click on get token")
+  (println "You need to have a Spotify account and a token that enables the app to fetch your top artists. Follow these steps:")
+  (println "1. Go to https://developer.spotify.com/console/get-current-user-top-artists-and-tracks")
+  (println "2. Click on Get Token")
+  (println "3. Check user-top-read")
+  (println "4. Click on Request token")
+  (println "5. Copy your token")
   (println "Now paste it here, please")
+)
+
+(defn fetch-bands
+  []
   (def spotify-token (read-line))
   (println "How many bands do you want for this battle?")
   (println "8, 16 or 32")
   (def limit (read-line))
   (println "We're fetching your bands...")
-  (def bands (fetch-spotify-bands (str spotify-token) (str limit)))
-  (println (str "Here your top " limit " bands are:"))
+  (fetch-spotify-bands (str spotify-token) (str limit))
+)
+
+(defn rank
+  [bands]
+  (println (str "Your top bands are:"))
   (doseq [item (map-indexed vector bands)] (println (+ (first item) 1) "-" (last item)))
-  (println "The battle is going to start:")
+)
+
+(defn -main
+  [& args]
+  (setup-instructions)
+  (def bands (fetch-bands))
+  (rank bands)
   (fight-generator bands)
 )
