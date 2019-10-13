@@ -1,20 +1,15 @@
-(ns battle-of-the-bands.bands)
+(ns battle-of-the-bands.bands
+  (:require [clj-http.client :as client])
+  (:require [cheshire.core :refer :all])
+)
 
-(def all-bands [
-  "Iron Maiden"
-  "Metallica"
-  "Foo Fighters"
-  "Queens of the stone age"
-  "Rage Against the Machine"
-  "Audioslave"
-  "Nirvana"
-  "The Offspring"
-  "Led Zeppelin"
-  "Queen"
-  "Arctic Monkeys"
-  "Deep Purple"
-  "ACDC"
-  "Ramones"
-  "Kiss"
-  "The Doors"
-])
+(def stopify-base-url "https://api.spotify.com/v1/me/top/artists?limit=")
+
+(defn fetch-spotify-bands
+  [token limit]
+  (let [
+    response (client/get (str stopify-base-url limit) {:accept :json :headers {"Authorization" (str "Bearer " token) }})
+  ]
+    (map :name (:items (parse-string (:body response) true)))
+  )
+)
