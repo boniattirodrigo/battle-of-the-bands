@@ -1,7 +1,7 @@
 (ns battle-of-the-bands.core
   (:gen-class))
 
-(def bands [
+(def all-bands [
   "Iron Maiden"
   "Metallica"
   "Foo Fighters"
@@ -20,40 +20,49 @@
   "The Doors"
 ])
 
-(defn clashes-generator
+(defn knockout-generator
   [bands]
   (let [
-        bands-shuffled (partition (/ (count bands) 2) (shuffle bands))
-        first-bands (first bands-shuffled)
-        last-bands (last bands-shuffled)
-        ]
-        (zipmap first-bands last-bands)
-  ))
+    bands-shuffled (partition (/ (count bands) 2) (shuffle bands))
+    first-group (first bands-shuffled)
+    last-group (last bands-shuffled)
+  ]
+    (zipmap first-group last-group)
+  )
+)
 
-(defn select-band
-  [bands-selected band-fight]
-    (let [band-one (first band-fight)
-          band-two (last band-fight)
-          ]
-      (println "Which one is better?")
+(defn fight-bands
+  [bands-selected bands-to-fight]
+  (let [
+    band-one (first bands-to-fight)
+    band-two (last bands-to-fight)
+  ]
+    (println "Which one is better?")
     (println (str "1 - " band-one))
     (println (str "2 - " band-two))
+
     (def option (read-line))
-    (if (= (str option) "1") (cons band-one bands-selected) (cons band-two bands-selected))))
+    (if (= (str option) "1")
+      (cons band-one bands-selected)
+      (cons band-two bands-selected)
+    )
+  )
+)
 
 (defn fight-generator
-  [b]
-  (if (= (count b) 1)
-    (println (str "THE CHAMPION IS: " (first b)))
+  [bands]
+  (if (= (count bands) 1)
+    (println (str "THE CHAMPION IS: " (first bands)))
     (do
-      (println "---- NEW ROUND ---")
-      (recur (reduce select-band [] (clashes-generator b)))
-      )
-  ))
+      (println "---- NEW ROUND ----")
+      (recur (reduce fight-bands [] (knockout-generator bands)))
+    )
+  )
+)
 
-      (defn -main
+(defn -main
   [& args]
   (println "The fights will start. Are you ready?")
   (println "Go!")
-  (fight-generator bands)
-  )
+  (fight-generator all-bands)
+)
