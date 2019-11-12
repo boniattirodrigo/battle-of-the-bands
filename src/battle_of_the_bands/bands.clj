@@ -10,6 +10,8 @@
   (let [
     response (client/get (str stopify-base-url limit) {:accept :json :headers {"Authorization" (str "Bearer " token) }})
   ]
-    (map :name (:items (parse-string (:body response) true)))
+    (->> (parse-string (:body response) true)
+        :items
+        (map :name))
   )
 )
